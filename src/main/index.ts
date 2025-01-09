@@ -6,14 +6,18 @@ import { db } from './database/db';
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
+    width: 1200,
+    minWidth: 1200,
+    height: 800,
+    minHeight: 800,
+    fullscreen: true,
     show: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
+      sandbox: false,
+      contextIsolation: true
     }
   });
 
@@ -51,6 +55,7 @@ app.whenReady().then(() => {
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'));
+
   // Initialize the database
   // Trigger the database connection and table creation
   db;
