@@ -3,14 +3,21 @@ import { join } from 'path';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/icon.png?asset';
 import { db } from './database/db';
+import { runMigrations } from './database/migrations';
+
+let loginWindow: BrowserWindow | null = null;
+let mainWindow: BrowserWindow | null = null;
+
 function createWindow(): void {
+  // Create the login window.
+
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 1200,
     minWidth: 1200,
     height: 800,
     minHeight: 800,
-    fullscreen: true,
+    // fullscreen: true,
     show: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
@@ -45,7 +52,7 @@ function createWindow(): void {
 app.whenReady().then(() => {
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron');
-
+  runMigrations();
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.
   // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils

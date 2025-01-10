@@ -1,35 +1,42 @@
-import Versions from './components/Versions'
-import electronLogo from './assets/electron.svg'
+import { Routes, Route, BrowserRouter as Router } from 'react-router-dom';
 
+import { StaffRoutes, AdminRoutes } from './routes/index';
+import { Login } from './pages/index';
+import NotAuthenticatedRoute from './routes/NotAuthenticatedRoutes';
+import { Unathorized } from './components/Auth/Unathorized';
 function App(): JSX.Element {
-  const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
-
+  const isAuthenticated = false; // Replace with real auth logic
+  const role = 'staff'; // Replace with real role logic
   return (
     <>
-      <img alt="logo" className="logo" src={electronLogo} />
-      <div className="creator">Powered by electron-vite</div>
-      <div className="text">
-        Build an Electron app with <span className="react">React</span>
-        &nbsp;and <span className="ts">TypeScript</span>
-      </div>
-      <p className="tip">
-        Please try pressing <code>F12</code> to open the devTool
-      </p>
-      <div className="actions">
-        <div className="action">
-          <a href="https://electron-vite.org/" target="_blank" rel="noreferrer">
-            Documentation
-          </a>
-        </div>
-        <div className="action">
-          <a target="_blank" rel="noreferrer" onClick={ipcHandle}>
-            Send IPC
-          </a>
-        </div>
-      </div>
-      <Versions></Versions>
-    </>
-  )
-}
+      {/* Wrap the route in an auth provider */}
+      <Router>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <NotAuthenticatedRoute
+                element={Login}
+                isAuthenticated={isAuthenticated}
+                role={role}
+              />
+            }
+          />
 
-export default App
+          <Route
+            path="/*"
+            element={<AdminRoutes isAuthenticated={isAuthenticated} role={role} />}
+          />
+
+          <Route
+            path="/staff/*"
+            element={<StaffRoutes isAuthenticated={isAuthenticated} role={role} />}
+          />
+
+          <Route path="/unauthorized" element={<Unathorized />} />
+        </Routes>
+      </Router>
+    </>
+  );
+}
+export default App;

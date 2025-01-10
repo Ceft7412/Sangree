@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+  </head>
+  <body>
+    <h1>Login</h1>
+    <form id="login-form">
+      <label for="username">Username:</label>
+      <input type="text" id="username" required />
+      <br />
+      <label for="password">Password:</label>
+      <input type="password" id="password" required />
+      <br />
+      <label for="role">Role:</label>
+      <select id="role" required>
+        <option value="user">User</option>
+        <option value="admin">Admin</option>
+      </select>
+      <br />
+      <button type="submit">Login</button>
+    </form>
+
+    <script>
+      const { ipcRenderer } = require('electron');
+      const form = document.getElementById('login-form');
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        const role = document.getElementById('role').value;
+
+        // Mock login success and send role to main process
+        ipcRenderer.send('login-success', role);
+      });
+    </script>
+  </body>
+</html>
